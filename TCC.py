@@ -143,7 +143,7 @@ def timesplit(tscv,X,y,n_estimators,max_depth):
       
       resultados.append([acc,erro_ab,train_index[-1],(end-start)])
       print("R2 do Regressor de Floresta Aleatória:",acc_rfr,"%")
-      grafico_distribuição_previsoes(y_test,y_pred,X_train,max_depth,n_estimators) #Criação dos gráficos tipo scatter da distribuição das previsões frente aos valores reais
+      grafico_distribuicao_previsoes(y_test,y_pred,X_train,max_depth,n_estimators) #Criação dos gráficos tipo scatter da distribuição das previsões frente aos valores reais
 
     return resultados
 
@@ -161,7 +161,7 @@ def florestas_aleatorias(tscv, instancia, X, y):
     return Resultados
 
 # 8-> Geração do gráfico que mostra os valores das previsões frente aos valores reais, e sua distribuição num gráfico tipo scatter (grafico_distribuição_previsões)
-def grafico_distribuição_previsoes(y_test,y_pred,X_train,max_depth,n_estimators):
+def grafico_distribuicao_previsoes(y_test,y_pred,X_train,max_depth,n_estimators):
     df_fa = pd.DataFrame({'Valor Real': y_test, 'Previsão': y_pred})
     plt.scatter(y_test,y_pred) #Plot Scatter
     ax = sns.regplot(x="Valor Real", y="Previsão", data=df_fa, color='red',marker="") #Linha vermelha com regressão dos pontos, a linha verde do x=y foi traçada no GIMP
