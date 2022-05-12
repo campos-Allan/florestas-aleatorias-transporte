@@ -1,17 +1,22 @@
-# IMPORTANDO BIBLIOTECAS
+"""aplicacao de florestas aleatorias na base de dados
+de transporte público de belo horizonte
+"""
 from datetime import date, timedelta
 import time
+from typing import List, Any
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
 
 
-def compilador_de_dados_passageiros(df_passageiro: pd.DataFrame, ano: int, mes: int, diretorio_arquivos: str) -> pd.DataFrame:
+def compilador_de_dados_passageiros(
+        df_passageiro: pd.DataFrame,
+        ano: int, mes: int,
+        diretorio_arquivos: str) -> pd.DataFrame:
     """compilar planilhas e agrupar os dados de passageiros em um dataframe
     Args:
         df_passageiro (pd.DataFrame): agrupador dos dados
@@ -30,15 +35,16 @@ def compilador_de_dados_passageiros(df_passageiro: pd.DataFrame, ano: int, mes: 
             caminho_planilhas = diretorio_arquivos + \
                 '/mco-'+str(mes)+'-20'+str(ano)+".csv"
 
-        df = pd.DataFrame(pd.read_csv(caminho_planilhas, encoding='utf-8', sep=';',
-                                      usecols=[' VIAGEM', ' LINHA', ' CATRACA SAIDA', ' CATRACA CHEGADA']))
-        # Subtraindo valores de catraca saida da catraca chegada, calculando passageiros
-        df['Passageiros'] = df.apply(lambda x: (
+        df_planilha = pd.DataFrame(pd.read_csv(caminho_planilhas, encoding='utf-8', sep=';',
+                                               usecols=[' VIAGEM', ' LINHA',
+                                                        ' CATRACA SAIDA', ' CATRACA CHEGADA']))
+        # subtraindo valores de catraca saida da catraca chegada, calculando passageiros
+        df_planilha['Passageiros'] = df_planilha.apply(lambda x: (
             100000-x[2]+x[3]) if (((x[3]-x[2]) < 0) & ((x[2]/100) >= 998)) else (x[3]-x[2]), axis=1)
-        df = df.drop(
+        df_planilha = df_planilha.drop(
             [' CATRACA SAIDA', ' CATRACA CHEGADA'], axis=1)
         df_passageiro = pd.concat(
-            [df, df_passageiro], ignore_index=True)
+            [df_planilha, df_passageiro], ignore_index=True)
 
         print(str(mes)+'-20'+str(ano)+' OK')
         mes += 1
@@ -56,42 +62,42 @@ def grafico_passageiros(data: pd.DataFrame) -> None:
     """
     sns.set_theme(style="whitegrid")
     sns.set(font_scale=2)
-    f, ax = plt.subplots(figsize=(6.5, 6.5))
-    sns.despine(f, left=True, bottom=True)
+    fig, axis = plt.subplots(figsize=(6.5, 6.5))
+    sns.despine(fig, left=True, bottom=True)
     sns.scatterplot(x=" VIAGEM", y="Passageiros",
                     palette="ch:r=-.2,d=.3_r",
                     sizes=(1, 8), linewidth=0,
-                    data=data, ax=ax)
+                    data=data, ax=axis)
     plt.show()
 
 
-def formatador_passageiros(df_passageiros: pd.DataFrame) -> pd.DataFrame:
+def formatador_passageiros(df_passageiro: pd.DataFrame) -> pd.DataFrame:
     """formatação do dataframe de passageiros, gerando novos atributos
 
     Args:
-        df_passageiros (pd.DataFrame): df pra ser formatado
+        df_passageiro (pd.DataFrame): df pra ser formatado
 
     Returns:
         pd.DataFrame: df formatado
     """
-    # Renomeando colunas
-    df_passageiros = df_passageiros.rename({'Valor': 'Passageiros'}, axis=1)
-    df_passageiros = df_passageiros.rename({' VIAGEM': 'VIAGEM'}, axis=1)
-    df_passageiros = df_passageiros.rename({' LINHA': 'LINHA'}, axis=1)
+    # renomeando colunas
+    df_passageiro = df_passageiro.rename({'Valor': 'Passageiros'}, axis=1)
+    df_passageiro = df_passageiro.rename({' VIAGEM': 'VIAGEM'}, axis=1)
+    df_passageiro = df_passageiro.rename({' LINHA': 'LINHA'}, axis=1)
 
-    # Gerando novos atributos de data
-    df_passageiros['Ano'] = df_passageiros['VIAGEM'].map(lambda x: x.year)
-    df_passageiros['Mes'] = df_passageiros['VIAGEM'].map(lambda x: x.month)
-    df_passageiros['Dia'] = df_passageiros['VIAGEM'].map(lambda x: x.day)
-    df_passageiros['Dia da Semana'] = df_passageiros['VIAGEM'].map(
+    # gerando novos atributos de data
+    df_passageiro['Ano'] = df_passageiro['VIAGEM'].map(lambda x: x.year)
+    df_passageiro['Mes'] = df_passageiro['VIAGEM'].map(lambda x: x.month)
+    df_passageiro['Dia'] = df_passageiro['VIAGEM'].map(lambda x: x.day)
+    df_passageiro['Dia da Semana'] = df_passageiro['VIAGEM'].map(
         lambda x: x.weekday())
-    df_passageiros['Semana do ano'] = df_passageiros['VIAGEM'].apply(
+    df_passageiro['Semana do ano'] = df_passageiro['VIAGEM'].apply(
         lambda x: x.weekofyear)
 
-    # Criando atributos do feriado, pré feriado e pós feriado
-    df_passageiros['Pre Feriado'] = 0
-    df_passageiros['Feriado'] = 0
-    df_passageiros['Pos Feriado'] = 0
+    # criando atributos do feriado, pré feriado e pós feriado
+    df_passageiro['Pre Feriado'] = 0
+    df_passageiro['Feriado'] = 0
+    df_passageiro['Pos Feriado'] = 0
     feriados = [date(2016, 1, 1), date(2016, 2, 8), date(2016, 2, 9),
                 date(2016, 2, 10), date(2016, 3, 25), date(2016, 4, 21),
                 date(2016, 5, 1), date(2016, 5, 26), date(2016, 8, 15),
@@ -122,7 +128,7 @@ def formatador_passageiros(df_passageiros: pd.DataFrame) -> pd.DataFrame:
                 date(2021, 5, 1), date(2021, 6, 3), date(2021, 8, 15),
                 date(2021, 9, 7), date(2021, 10, 12), date(2021, 11, 2),
                 date(2021, 11, 15), date(2021, 12, 8), date(2021, 12, 25)]
-    df_passageiros['Feriado'] = df_passageiros['VIAGEM'].apply(
+    df_passageiro['Feriado'] = df_passageiro['VIAGEM'].apply(
         lambda x: 1 if x in feriados else 0)
     dia = timedelta(1)
     pre_feriados = []
@@ -130,27 +136,29 @@ def formatador_passageiros(df_passageiros: pd.DataFrame) -> pd.DataFrame:
     for i in feriados:
         pre_feriados.append(i-dia)
         pos_feriados.append(i+dia)
-    df_passageiros['Pre Feriado'] = df_passageiros['VIAGEM'].apply(
+    df_passageiro['Pre Feriado'] = df_passageiro['VIAGEM'].apply(
         lambda x: 1 if x in pre_feriados else 0)
-    df_passageiros['Pos Feriado'] = df_passageiros['VIAGEM'].apply(
+    df_passageiro['Pos Feriado'] = df_passageiro['VIAGEM'].apply(
         lambda x: 1 if x in pos_feriados else 0)
 
-    # Gerando atributo da pandemia
-    df_passageiros['Pandemia'] = df_passageiros["VIAGEM"].map(
+    # gerando atributo da pandemia
+    df_passageiro['Pandemia'] = df_passageiro["VIAGEM"].map(
         lambda x: 1 if x > date(2020, 3, 15) else 0)
 
-    # Substituindo os nomes das 319 linhas de ônibus por valores inteiro de 1 até 319
-    df_passageiros['LINHA'] = df_passageiros['LINHA'].astype(str)
-    df_passageiros['LINHA'] = df_passageiros['LINHA'].replace(
-        list(df_passageiros['LINHA'].unique()), list(range(1, 320)))
-    return df_passageiros
+    # substituindo os nomes das 319 linhas de ônibus por valores inteiro de 1 até 319
+    df_passageiro['LINHA'] = df_passageiro['LINHA'].astype(str)
+    df_passageiro['LINHA'] = df_passageiro['LINHA'].replace(
+        list(df_passageiro['LINHA'].unique()), list(range(1, 320)))
+    return df_passageiro
 
 
-def compilador_de_dados_climaticos(df_clima: pd.DataFrame, ano: int, diretorio_arquivos: str) -> pd.DataFrame:
+def compilador_de_dados_climaticos(
+        df_chuva_temperatura: pd.DataFrame,
+        ano: int, diretorio_arquivos: str) -> pd.DataFrame:
     """agrupar os dados climáticos em um dataframe
 
     Args:
-        df_clima (pd.DataFrame): dataframe agrupador
+        df_chuva_temperatura (pd.DataFrame): dataframe agrupador
         ano (int): controle do ano pra abrir arquivos
         diretorio_arquivos (str): caminho até a pasta das planilhas
 
@@ -158,18 +166,20 @@ def compilador_de_dados_climaticos(df_clima: pd.DataFrame, ano: int, diretorio_a
         pd.DataFrame: dataframe com dados agrupados
     """
 
-    # Nas planilhas de dados climáticos do INMET, antes de se rodar o código,
+    # nas planilhas de dados climáticos do INMET, antes de se rodar o código,
     # excluiu-se as 8 primeiras linhas e todas colunas,
     # com exceção de Data, Hora, Temperatura do Ar e Precipitação Total
     while ano < 22:
         caminho = diretorio_arquivos+'/mg'+str(ano)+'.csv'
-        df = pd.DataFrame(pd.read_csv(caminho, encoding='utf-8', sep=';'))
-        df_clima = pd.concat([df, df_clima], ignore_index=True)
+        df_planilha = pd.DataFrame(pd.read_csv(
+            caminho, encoding='utf-8', sep=';'))
+        df_chuva_temperatura = pd.concat(
+            [df_planilha, df_chuva_temperatura], ignore_index=True)
         ano += 1
-    return df_clima
+    return df_chuva_temperatura
 
 
-def formatador_clima(df_clima: pd.DataFrame) -> pd.DataFrame:
+def formatador_clima(df_chuva_temperatura: pd.DataFrame) -> pd.DataFrame:
     """formatação do dataFrame climático, substituindo valores anômalos
 
     Args:
@@ -178,157 +188,214 @@ def formatador_clima(df_clima: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: df formatado
     """
-    df_clima['Chuva'] = df_clima['Chuva'].str.replace(",", ".")
-    df_clima['Temp'] = df_clima['Temp'].str.replace(",", ".")
+    df_chuva_temperatura['Chuva'] = df_chuva_temperatura['Chuva'].str.replace(
+        ",", ".")
+    df_chuva_temperatura['Temp'] = df_chuva_temperatura['Temp'].str.replace(
+        ",", ".")
 
-    # Substituindo valores '-9999' por valores nulos
-    df_clima['Chuva'] = df_clima['Chuva'].replace("-9999", np.nan)
-    df_clima['Temp'] = df_clima['Temp'].replace("-9999", np.nan)
+    # substituindo valores '-9999' por valores nulos
+    df_chuva_temperatura['Chuva'] = df_chuva_temperatura['Chuva'].replace(
+        "-9999", np.nan)
+    df_chuva_temperatura['Temp'] = df_chuva_temperatura['Temp'].replace(
+        "-9999", np.nan)
 
-    df_clima['Chuva'] = df_clima['Chuva'].astype(float)
-    df_clima['Temp'] = df_clima['Temp'].astype(float)
+    df_chuva_temperatura['Chuva'] = df_chuva_temperatura['Chuva'].astype(float)
+    df_chuva_temperatura['Temp'] = df_chuva_temperatura['Temp'].astype(float)
 
-    # Preenchendo valores nulos de chuva por 0
+    # preenchendo valores nulos de chuva por 0
     # e valores nulos de temperatura pela média
-    df_clima['Chuva'] = df_clima['Chuva'].fillna(0)
-    df_clima['Temp'] = df_clima['Temp'].fillna(df_clima['Temp'].mean())
+    df_chuva_temperatura['Chuva'] = df_chuva_temperatura['Chuva'].fillna(0)
+    df_chuva_temperatura['Temp'] = df_chuva_temperatura['Temp'].fillna(
+        df_chuva_temperatura['Temp'].mean())
 
-    # Agrupando medições horárias por dia, e gerando novas colunas,
+    # agrupando medições horárias por dia, e gerando novas colunas,
     # do somatório total de chuva, além de valores médios,
     # máximos e mínimos de temperatura
-    df_clima = df_clima.groupby('Data', axis=0, as_index=False).agg(
+    df_chuva_temperatura = df_chuva_temperatura.groupby('Data', axis=0, as_index=False).agg(
         {'Chuva': 'sum', 'Temp': ['mean', 'max', 'min']})
-    df_clima.columns = df_clima.columns.droplevel(0)
+    df_chuva_temperatura.columns = df_chuva_temperatura.columns.droplevel(0)
 
-    # Mexendo na coluna de data (VIAGEM) para criar compatibilidade com o DataFrame de passageiros, e juntar os dois DataFrames a partir dela
-    df_clima[''] = pd.to_datetime(df_clima[''], dayfirst=True)
-    df_clima = df_clima.sort_values(by='')
-    df_clima = df_clima.rename(columns={'': 'VIAGEM'})
+    # mexendo na coluna de data (VIAGEM) para criar compatibilidade
+    # com o dataframe de passageiros,
+    # e juntar os dois dataframes a partir dela
+    df_chuva_temperatura[''] = pd.to_datetime(
+        df_chuva_temperatura[''], dayfirst=True)
+    df_chuva_temperatura = df_chuva_temperatura.sort_values(by='')
+    df_chuva_temperatura = df_chuva_temperatura.rename(columns={'': 'VIAGEM'})
 
-    return df_clima
-
-# 6-> Iterações que percorrem os dados, dividindo conjuntos de treino e teste, seguindo o modelo janela crescente com validação adiante (timesplit)
+    return df_chuva_temperatura
 
 
-def timesplit(tscv, X, y, n_estimators, max_depth):
-    # Modelo de Floresta Aleatória de Regressão
+def timesplit(
+        time_split: TimeSeriesSplit,
+        atributos_x: pd.DataFrame, passageiros_y: pd.Series,
+        n_estimators: int, max_depth: int) -> List[List]:
+    """iterações que percorrem os dados,
+    dividindo conjuntos de treino e teste
+
+    Args:
+        time_split (TimeSeriesSplit): modelo janela crescente com validação adiante
+        atributos_x (pd.DataFrame): atributos do modelo
+        passageiros_y (pd.Series): variável passageiros
+        n_estimators (int): quantidade de árvores na floresta
+        max_depth (int): profundidade máxima da árvore
+
+    Returns:
+        List[List]: resultados a cada iteração
+    """
     reg = RandomForestRegressor(
         n_estimators=n_estimators, max_depth=max_depth, random_state=42)
     resultados = []
-    for fold, (train_index, test_index) in enumerate(tscv.split(X)):
+    for fold, (train_index, test_index) in enumerate(time_split.split(atributos_x)):
         start = time.time()  # Início do cálculo do tempo decorrido
 
-        # Índices de treino e teste de acordo com a iteração da janela crescente com validação adiante
-        print("Fold: {}".format(fold))
+        # índices de treino e teste de acordo com a
+        # iteração da janela crescente com validação adiante
+        print(f"Fold: {fold}")
         print("TRAIN indices:", train_index, "\n", "TEST indices:", test_index)
         print("\n")
 
-        # Divisão dos dados entre treino e teste, nos atributos (X) e variável 'Passageiros' (Y)
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+        # divisão dos dados entre treino e teste,
+        # nos atributos (X) e variável 'passageiros' (Y)
+        x_train, x_test = atributos_x.iloc[train_index], atributos_x.iloc[test_index]
+        y_train, y_test = passageiros_y.iloc[train_index], passageiros_y.iloc[test_index]
 
-        reg.fit(X_train, y_train)  # Fit com valores de treino
-        # R² com valores de teste
-        acc = round(reg.score(X_test, y_test) * 100, 2)
-        y_pred = reg.predict(X_test)  # Prevendo valores de teste
+        reg.fit(x_train, y_train)  # fit com valores de treino
+        acc = round(reg.score(x_test, y_test) * 100, 2)  # R²
+        y_pred = reg.predict(x_test)  # prevendo valores de teste
         erro_ab = mean_absolute_error(
             y_test, y_pred)  # MAE com valores preditos
 
-        end = time.time()  # Final do cálculo do tempo decorrido
+        end = time.time()  # final do cálculo do tempo decorrido
 
         resultados.append([acc, erro_ab, train_index[-1], (end-start)])
         print("R2 do Regressor de Floresta Aleatória:", acc, "%")
-        # Criação dos gráficos tipo scatter da distribuição das previsões frente aos valores reais
-        grafico_distribuição_previsoes(
-            y_test, y_pred, X_train, max_depth, n_estimators)
+        # criação dos gráficos tipo scatter da distribuição das previsões
+        grafico_distribuicao_previsoes(
+            y_test, y_pred, x_train, max_depth, n_estimators)
 
     return resultados
 
-# 7-> Modelos de Floresta Aleatória com diferentes hiperparâmetros sendo iterados na função 6, e reunindo os resultados em um DataFrame (florestas_aleatorias)
 
+def florestas_aleatorias(
+        time_split: TimeSeriesSplit,
+        instancia: str,
+        atributos_x: pd.DataFrame, passageiros_y: pd.Series) -> pd.DataFrame:
+    """ modelos de floresta aleatória com diferentes hiperparâmetros
+    sendo iterados na função anterior
 
-def florestas_aleatorias(tscv, instancia, X, y):
-    # Parâmetros de quantidade de árvores
+    Args:
+        time_split (TimeSeriesSplit): modelo janela crescente com validação adiante
+        instancia (str): pandemia, pré pandemia ou conjunto completo
+        atributos_x (pd.DataFrame): atributos do modelo
+        passageiros_y (pd.Series): variável passageiros
+
+    Returns:
+        pd.DataFrame: resultados das métricas de desempenho
+    """
+    # parâmetros de quantidade de árvores
     nos = [2, 10, 20, 50, 100]
-    # Paâmetros de profundidade máxima da árvore
+    # parâmetros de profundidade máxima da árvore
     profund = [5, 10, 20, 50, 100]
-    Resultados = pd.DataFrame()
+    resultados = pd.DataFrame()
     for i in nos:
         for j in profund:
-            # Salvando no DataFrame de resultados da função acima de acordo com os hiperparâmetros usados por cada modelo
-            Resultados[instancia+' DATAFRAME, '+'A' +
-                       str(i)+' N'+str(j)] = timesplit(tscv, X, y, i, j)
-    return Resultados
-
-# 8-> Geração do gráfico que mostra os valores das previsões frente aos valores reais, e sua distribuição num gráfico tipo scatter (grafico_distribuição_previsões)
+            resultados[instancia+' DATAFRAME, '+'A' +
+                       str(i)+' N'+str(j)] = timesplit(time_split, atributos_x, passageiros_y, i, j)
+    return resultados
 
 
-def grafico_distribuição_previsoes(y_test, y_pred, X_train, max_depth, n_estimators):
+def grafico_distribuicao_previsoes(
+        y_test: Any, y_pred: Any,
+        x_train: pd.Series,
+        max_depth: int, n_estimators: int) -> None:
+    """geração do gráfico que mostra os valores das
+    previsões frente aos valores reais
+    """
     df_fa = pd.DataFrame({'Valor Real': y_test, 'Previsão': y_pred})
-    plt.scatter(y_test, y_pred)  # Plot Scatter
-    # Linha vermelha com regressão dos pontos, a linha verde do x=y foi traçada no GIMP
-    ax = sns.regplot(x="Valor Real", y="Previsão",
-                     data=df_fa, color='red', marker="")
+    plt.scatter(y_test, y_pred)  # plot scatter
+    # linha vermelha com regressão dos pontos,
+    # a linha verde do x=y foi traçada no GIMP
+    sns.regplot(x="Valor Real", y="Previsão",
+                data=df_fa, color='red', marker="")
 
-    # Salvando gráficos de acordo com a divisão de dados trabalhada
+    # salvando gráficos de acordo com a divisão de dados trabalhada
     if len(X) > 410000:
         plt.savefig('TODO DATAFRAME A'+str(n_estimators)+" N" +
-                    str(max_depth)+' '+str(len(X_train))+'.png')
+                    str(max_depth)+' '+str(len(x_train))+'.png')
     elif len(X) < 200000:
         plt.savefig('PAN DATAFRAME A'+str(n_estimators)+" N" +
-                    str(max_depth)+' '+str(len(X_train))+'.png')
+                    str(max_depth)+' '+str(len(x_train))+'.png')
     else:
         plt.savefig('PRE DATAFRAME A'+str(n_estimators)+" N" +
-                    str(max_depth)+' '+str(len(X_train))+'.png')
+                    str(max_depth)+' '+str(len(x_train))+'.png')
     plt.clf()
 
-# 9-> Geração dos gráficos das métricas de desempenho do modelo A100 N100 no decorrer das iterações da função 6, além de chamar a função seguinte para mais gráficos (graficos_resultados)
+
+def graficos_resultados(resultados: List[List]) -> None:
+    """geração dos gráficos das métricas de desempenho
+    do modelo A100 N100
 
 
-def graficos_resultados(Resultados):
-    # Dividindo as métricas a partir do DataFrame dos resultados
-    Resultados_R2 = Resultados.applymap(lambda x: x[0])
-    Resultados_mae = Resultados.applymap(lambda x: x[1])
-    Resultados_tempo = Resultados.applymap(lambda x: x[3])
+    Args:
+        resultados (List[List]): resultados das métricas
+    """
+    # dividindo as métricas a partir dos resultados
+    resultados_r2 = resultados.applymap(lambda x: x[0])
+    resultados_mae = resultados.applymap(lambda x: x[1])
+    resultados_tempo = resultados.applymap(lambda x: x[3])
 
-    # Plotando com eixo secundário os valores de MAE e R² de acordo com iterações da janela para o modelo A100N100
-    fig, ax = plt.subplots()
-    ax.plot(Resultados_R2.iloc[:, -1], color="red", marker="o")
-    ax.set_xlabel("Iterações da Janela", fontsize=14)
-    ax.set_ylabel("R²", color="red", fontsize=14)
-    ax2 = ax.twinx()
-    ax2.plot(Resultados_mae.iloc[:, -1], color="blue", marker="o")
+    # plotando com eixo secundário os valores de MAE e R²
+    # de acordo com iterações da janela para o modelo A100N100
+    fig, ax1 = plt.subplots()
+    fig.subtitle('A100 N100')
+    ax1.plot(resultados_r2.iloc[:, -1], color="red", marker="o")
+    ax1.set_xlabel("Iterações da Janela", fontsize=14)
+    ax1.set_ylabel("R²", color="red", fontsize=14)
+    ax2 = ax1.twinx()
+    ax2.plot(resultados_mae.iloc[:, -1], color="blue", marker="o")
     ax2.set_ylabel("Erro Médio Absoluto (Passageiros)",
                    color="blue", fontsize=14)
     plt.tight_layout()
     plt.show()
 
-    # Chamando a próxima função para plotar métricas de desempenho para todos modelos de Floresta Aleatória
-    plotador_modelos(Resultados_R2, 'box_r2')
-    plotador_modelos(Resultados_mae, 'box_mae')
-    plotador_modelos(Resultados_tempo, 'plt')
+    # chamando a próxima função para plotar métricas
+    # de desempenho para todos modelos de Floresta Aleatória
+    plotador_modelos(resultados_r2, 'box_r2')
+    plotador_modelos(resultados_mae, 'box_mae')
+    plotador_modelos(resultados_tempo, 'plt')
 
-# 10-> Geração dos gráficos dos desempenhos de MAE e R² de cada modelo de Floresta Aleatória em um boxplot, além do gráfico de tempo decorrido pelos modelos (plotador_modelos)
 
+def plotador_modelos(resultados: Any, tipo: str) -> None:
+    """gráficos dos desempenhos de MAE e R² de cada
+    modelo de Floresta Aleatória em boxplot, além do gráfico
+    de tempo
 
-def plotador_modelos(db, tipo):
-    db.columns = ['A2 N5', 'A2 N10', 'A2 N20', 'A2 N50', 'A2 N100', 'A10 N5', 'A10 N10', 'A10 N20', 'A10 N50', 'A10 N100', 'A20 N5', 'A20 N10',
-                  'A20 N20', 'A20 N50', 'A20 N100', 'A50 N5', 'A50 N10', 'A50 N20', 'A50 N50', 'A50 N100', 'A100 N5', 'A100 N10', 'A100 N20', 'A100 N50', 'A100 N100']
+    Args:
+        resultados (Any): resultados dos modelos
+        tipo (str): tipo de gráfico, sendo boxplot ou plot do tempo
+    """
+    resultados.columns = ['A2 N5', 'A2 N10', 'A2 N20', 'A2 N50', 'A2 N100',
+                          'A10 N5', 'A10 N10', 'A10 N20', 'A10 N50',
+                          'A10 N100', 'A20 N5', 'A20 N10', 'A20 N20',
+                          'A20 N50', 'A20 N100', 'A50 N5', 'A50 N10',
+                          'A50 N20', 'A50 N50', 'A50 N100', 'A100 N5',
+                          'A100 N10', 'A100 N20', 'A100 N50', 'A100 N100']
     sns.set_style("whitegrid")
     if tipo == 'plt':
-        # Plot do tempo decorrido por cada modelo de Floresta Aleatória
-        db = db.sum()
-        db.plot(fontsize=14)
+        # plot do tempo decorrido por cada modelo de Floresta Aleatória
+        resultados = resultados.sum()
+        resultados.plot(fontsize=14)
         plt.xlabel('Modelos de Floresta Aleatória')
         plt.ylabel('Segundos')
         plt.tight_layout()
         plt.show()
         plt.clf()
     else:
-        # Boxplot dos valores de R² e MAE para cada modelo de Floresta Aleatória
-        plt.boxplot(db)
-        plt.xticks(ticks=range(len(db.columns)),
-                   labels=db.columns, rotation=45)
+        # boxplot dos valores de R² e MAE para cada modelo de Floresta Aleatória
+        plt.boxplot(resultados)
+        plt.xticks(ticks=range(len(resultados.columns)),
+                   labels=resultados.columns, rotation=45)
         plt.xlabel('Modelos de Floresta Aleatória')
         if tipo == 'box_r2':
             plt.ylabel('R²')
@@ -376,36 +443,46 @@ df_clima = formatador_clima(df_clima)
 # juntado os dados de passageiros com dados climáticos
 df_final = pd.merge(df_passageiros, df_clima, on='VIAGEM')
 df_final = df_final.rename(columns={
-                           'sum': 'Chuva', 'mean': 'Temperatura media', 'max': 'Temperatura Max', 'min': 'Temperatura Min'})
+                           'sum': 'Chuva',
+                           'mean': 'Temperatura media',
+                           'max': 'Temperatura Max',
+                           'min': 'Temperatura Min'})
 df_final = df_final.drop("VIAGEM", axis=1)
 
-# Separando todos atributos de clima e calendário(X), da variável do número de passageiros (Y), que será predita no método de Florestas Aleatórias
+# separando todos atributos de clima e calendário(X),
+# da variável do número de passageiros (Y),
+# que será predita no método de Florestas Aleatórias
 X = df_final.copy()
 y = X.pop("Passageiros")
 
-# Primeiro experimento sendo realizados no período completo de dados
-# tscv = TimeSeriesSplit(n_splits=24)  # +- 3 meses
-#Resultados_periodocompleto = pd.DataFrame()
-#Resultados_periodocompleto = florestas_aleatorias(tscv, 'TODO', X, y)
+# primeiro experimento sendo realizados no período completo de dados
+tscv = TimeSeriesSplit(n_splits=24)  # +- 3 meses
+Resultados_periodocompleto = pd.DataFrame()
+Resultados_periodocompleto = florestas_aleatorias(tscv, 'TODO', X, y)
 
-# Divindo o conjunto de dados para separar o período sem os anos pandêmicos (2016-2019) e o período com os anos pandêmicos (2020-2021)
+# Divindo o conjunto de dados para separar
+# o período sem os anos pandêmicos (2016-2019)
+# e o período com os anos pandêmicos (2020-2021)
 X_pan = X[400038:]
 y_pan = y[400038:]
 
 X_pre = X[:400038]
 y_pre = y[:400038]
 
-# Segundo experimento sendo realizados no período de dados sem os anos pandêmicos
-# tscv = TimeSeriesSplit(n_splits=16)  # +- 3 meses
-#Resultados_pre_pandemia = pd.DataFrame()
-#Resultados_pre_pandemia = florestas_aleatorias(tscv, 'PRE', X_pre, y_pre)
+# Segundo experimento sendo realizados
+# no período de dados sem os anos pandêmicos
+tscv = TimeSeriesSplit(n_splits=16)  # +- 3 meses
+Resultados_pre_pandemia = pd.DataFrame()
+Resultados_pre_pandemia = florestas_aleatorias(tscv, 'PRE', X_pre, y_pre)
 
-# Terceiro experimento sendo realizados no período de dados com os anos pandêmicos
+# Terceiro experimento sendo realizados
+# no período de dados com os anos pandêmicos
 tscv = TimeSeriesSplit(n_splits=8)  # +- 3 meses
 Resultados_pan = pd.DataFrame()
 Resultados_pan = florestas_aleatorias(tscv, 'PAN', X_pan, y_pan)
 
-# Gerando gráficos finais das métricas de desempenho para cada conjunto de experimento feito
-# graficos_resultados(Resultados_periodocompleto)
-# graficos_resultados(Resultados_pre_pandemia)
+# Gerando gráficos finais das métricas de desempenho
+# para cada conjunto de experimento feito
+graficos_resultados(Resultados_periodocompleto)
+graficos_resultados(Resultados_pre_pandemia)
 graficos_resultados(Resultados_pan)
