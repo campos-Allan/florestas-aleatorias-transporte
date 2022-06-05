@@ -92,6 +92,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Time elapsed per random forest model - pandemic dataset
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/6wuxByr.png)
 
+### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line
 ![Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line](https://i.imgur.com/wWBYxay.png)
 
 More analysis like this and the discussion behind those results are in the thesis.
