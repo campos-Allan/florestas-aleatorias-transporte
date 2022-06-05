@@ -1,6 +1,6 @@
 # RANDOM FORESTS APPLICATION IN PUBLIC TRANSPORTATION DATABASE
 
-### Quick Summary
+## Quick Summary
 This project consists in the application of a myriad of random forests regressor models, varying in the hyperparameters of 'max_depth' and 'n_estimators', with the objective to analyze the capacity to predict the number of passengers per bus trip and per bus line in a certain time of the year, with a certain set of weather conditions.
 
 This is a undergraduate thesis to get a bachelor's degree in Civil Engineering on the Federal University of Rio de Janeiro (Brasil).
@@ -11,10 +11,10 @@ The weather dataset is from INMET (https://portal.inmet.gov.br/dadoshistoricos).
 
 The graduate underthesis this project is based on will be available soon (in PT-BR).
 
-# Disclaimer
+## Disclaimer
 Following the removal of the public transportation dataset, a few adjustments had to be made, as there was no way to web scrap anymore. So to avoid uploading >5GB of spreadsheets, a few steps were skipped, thats why the first part of the code in `main.py` is between quotation marks. The objective of that code was to go trough every passenger spreadsheet and compile the data, then groupby the trips by date and bus line, getting the quantity of passengers in each bus line, each day of the period between 2016 and 2021. As the code is beetween quotation marks, this step was skipped, and the final spreadsheet with all the trips grouped by day and bus line with the total of passengers is actually on `final_passenger_data.csv` already.
 
-### Structure
+## Structure
 * `main.py` -> code should run through here, calls all functions
 * `data_mining.py` -> compiling data
 * `preprocessing.py` -> formatting data
@@ -22,7 +22,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 * `graphics.py` -> results in graphics (used in thesis)
 * `final_passenger_data.csv` -> passenger data, read disclaimer above
 * `mgXX.csv` -> weather data from each year between 2016 and 2021
-### Approach
+## Approach
 * Reading passenger spreadsheets, getting the data from: date, ticket gate in arrival and departure, bus line.
 * Getting the number of `passengers` per trip by subtracting ticket gate number at arrival from ticket gate number at departure.
 * Concatenating all in a dataframe, while creating new columns such as `day`, `month`, `year` (division of previous date columns); `day of the week`, `week of the year` (taken from previous date columns); `holiday`, `pre holiday`, after `holiday` (1 if is, 0 if its not); `pandemic` (1 if its 15th of march 2020 onwards, 0 if it is backwards).
