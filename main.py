@@ -1,7 +1,7 @@
 """ undergraduate thesis project - predicting demand with random forest
 in a real public transportation database
 
-->> run the code through here, for more info README.md
+-> run the code through here, for more info README.md
 """
 import os
 import pandas as pd
