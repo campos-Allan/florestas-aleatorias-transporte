@@ -24,33 +24,33 @@ Following the removal of the public transportation dataset, a few adjustments ha
 * `mgXX.csv` -> weather data from each year between 2016 and 2021
 ## Approach
 * Reading passenger spreadsheets, getting the data from: date, ticket gate in arrival and departure, bus line.
-* Getting the number of `passengers` per trip by subtracting ticket gate number at arrival from ticket gate number at departure.
-* Concatenating all in a dataframe, while creating new columns such as `day`, `month`, `year` (division of previous date columns); `day of the week`, `week of the year` (taken from previous date columns); `holiday`, `pre holiday`, after `holiday` (1 if is, 0 if its not); `pandemic` (1 if its 15th of march 2020 onwards, 0 if it is backwards).
+* Getting the number of `passengers` per trip by subtracting ticket gate number at departure from ticket gate number at arrival.
+* Concatenating all data in a dataframe, while creating new columns such as `day`, `month`, `year` (division of previous date column); `day of the week`, `week of the year` (taken from previous date column); `holiday`, `pre holiday`, `after holiday` (1 if is, 0 if its not); `pandemic` (1 if its 15th of march 2020 onwards, 0 if it is backwards from this date).
 * Reading weather spreadsheets, getting the data from: date, hour of measurement (each line is one hour of distance from the one before and after), rain at the period and temperature at the period.
 * Group measurements by day, getting the sum of `rain` in that day, and `mean`, `min` and `max` temperatures in the day.
-* Clean anomalous values.
-* Group everything in the dataframe. Separate `passengers` column.
-* Use X (`features`) as every columns except `passengers` (`Y`).
+* Clean anomalous values from all datasets.
+* Group everything in one dataframe. Separate `passengers` column.
+* Use `X` (`features`) as every columns except `passengers` (`Y`).
 * Run everything through 25 Random Forests models, varying `n_estimators` using the following values:(2,10,20,50,100) and `max_depth`:(5,10,20,50,100).
-* Scatter plot real values vs predictions of every iteration of the division between train and test made by the growing-window forward-validation.
+* Scatter plot real values vs predictions, of every iteration of the division between train and test made by the growing-window forward-validation.
 * Plot separately the results per iterations of the model with `max_depth` = 100 and `n_estimators` = 100.
 * Plot the time elapsed in each random forest model.
 * Boxplot all the random forest models next to each other.
-* Repeat the approach using the dataset only on the pandemic years (2020, 2021) and then on the years without pandemic (2016-2019). To observe a few characteristics of a time series.
+* Repeat the approach using the dataset with only the pandemic years (2020, 2021) and then with the years without pandemic (2016-2019). To observe a few characteristics of a time series.
 ## Results
-### General look on passenger data
+### General look at passenger data
 ![General look on passenger data](https://i.imgur.com/6Z2wMRC.png)
 
 ### Passenger data cleaned and grouped by day
 ![Passenger data cleaned and grouped by day](https://i.imgur.com/vtJll2Z.png)
 
-### General look on temperature data
+### General look at temperature data
 ![General look on temperature data](https://i.imgur.com/mrWBwxm.png)
 
 ### Temperature data cleaned
 ![Temperature data cleaned](https://i.imgur.com/1SHoCr2.png)
 
-### General look on rain data
+### General look at rain data
 ![General look on rain data](https://i.imgur.com/0N0h1X8.png)
 
 ### Rain data cleaned
@@ -92,7 +92,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Time elapsed per random forest model - pandemic dataset
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/6wuxByr.png)
 
-### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line
+### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect 'predictions = real values'
 ![Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line](https://i.imgur.com/wWBYxay.png)
 
 More analysis like this and the discussion behind those results are in the thesis.
