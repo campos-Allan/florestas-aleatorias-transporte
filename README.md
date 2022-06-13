@@ -1,9 +1,7 @@
 # RANDOM FORESTS APPLICATION IN PUBLIC TRANSPORTATION DATABASE
-<<<<<<< HEAD
+
 ### version 2 - mainly updated graphic generation and data mining process (twice as fast now with glob), some formatting fixes on the other files
 =======
-
->>>>>>> 4a84ae81496802db094a6c6fe72ebbf1d2bae040
 ## Quick Summary
 This project consists in the application of a myriad of random forests regressor models, varying in the hyperparameters of 'max_depth' and 'n_estimators', with the objective to analyze its capacity to predict the number of passengers per bus line per day in a certain time of the year, with a certain set of weather conditions.
 
@@ -59,8 +57,6 @@ Following the removal of the public transportation dataset, a few adjustments ha
 
 ### Rain data cleaned
 ![Rain data cleaned](https://i.imgur.com/OHUb8Sz.png)
-
-<<<<<<< HEAD
 ### R² Boxplot of all random forest models - full dataset
 ![R² Boxplot of all random forest models - full dataset](https://i.imgur.com/62Z6H79.png)
 
@@ -88,7 +84,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Time elapsed per random forest model - pandemic dataset
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/HrPUQhL.png)
 
-### Models with max_depth set to 20 onwards seem to overfitted a bit, wihle the models with max_depth = 10 seem to underfitted the data, see the next pics for a in depth look. Pandemic data makes the model very erratic, some changes could be made to change the big variations on the data.
+### Models with max_depth set to 20 onwards seem to overfitted a bit, while the models with max_depth = 10 seem to underfitted the data, see the next pics for a in depth look. Pandemic data makes the model very erratic, some changes could be made to change the big variations on the data.
 ### R² and MAE values per iteration on A100N100 model - full dataset
 ![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/faV9WgG.png)
 
@@ -125,10 +121,10 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Above but with training values
 ![Above with training values](https://i.imgur.com/7kG9hXn.png)
 
-### Next update or studies could be done to improve model A10N10 performance without overfitting it, and finding a better way to deal with the variation of the pandemic data. Also, I'm still figuring out how the models with max_depth set to 20 onwards seem overfitted by their training perfomance even though the test perfomance are not from an usual overfitted model.
-
 ### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect 'predictions = real values'
 ![Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line](https://i.imgur.com/wWBYxay.png)
+
+### Next update or studies could be done to improve model A10N10 performance without overfitting it, and finding a better way to deal with the variation of the pandemic data. Also, I'm still figuring out how the models with max_depth set to 20 onwards seem overfitted by their training perfomance even though the test perfomance are not from an usual overfitted model.
 
 More analysis like this and the discussion behind those results are in the thesis.
 
