@@ -67,10 +67,10 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ![R² Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/L8ghGEP.png)
 
 ### MAE Boxplot of all random forest models - full dataset
-![MAE Boxplot of all random forest models - full dataset](https://i.imgur.com/G9FfYzX.png)
+![MAE Boxplot of all random forest models - full dataset](https://i.imgur.com/yOmSSaU.png))
 
 ### MAE Boxplot of all random forest models - pre pandemic dataset
-![MAE Boxplot of all random forest models - pre pandemic dataset](https://i.imgur.com/1PMUfV8.png)
+![MAE Boxplot of all random forest models - pre pandemic dataset](https://i.imgur.com/G9FfYzX.png)
 
 ### MAE Boxplot of all random forest models - pandemic dataset
 ![MAE Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/esP7LZB.png)
@@ -84,18 +84,18 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Time elapsed per random forest model - pandemic dataset
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/HrPUQhL.png)
 
-### Models with max_depth set to 20 onwards seem to overfitted a bit, while the models with max_depth = 10 seem to underfitted the data, see the next pics for a in depth look. Pandemic data makes the model very erratic, some changes could be made to change the big variations on the data.
+### Models with max_depth set to 20 onwards seem to overfitted (looking at the training values in next pics), while the models with max_depth = 5 seem to underfitted the data, see the next pics for an in-depth look as the model with max_depth=10 seem to be between those two extremes. Pandemic data makes the model very erratic, some changes could be made to change the big variations on the data.
 ### R² and MAE values per iteration on A100N100 model - full dataset
 ![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/faV9WgG.png)
 
-### Above but with training values - seems overfitted although the test values seem good
+### Above but with training values - seems overfitted although the test values seem good while outside the pandemic data (dive at 16th iteration)
 ![Above with training values](https://i.imgur.com/Q9VcDPY.png)
 
 ### R² and MAE values per iteration on A10N10 model - full dataset
 ![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/7LR2IJP.png)
 
 ### Above but with training values
-![Above with training values](https://i.imgur.com/7kG9hXn.png)
+![Above with training values](https://i.imgur.com/2wvbVFB.png)
 
 ### R² and MAE values per iteration on A100N100 model - pre pandemic dataset
 ![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/LOIXmjf.png)
@@ -116,7 +116,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ![Above with training values](https://i.imgur.com/KabSsg9.png)
 
 ### R² and MAE values per iteration on A10N10 model - pandemic dataset
-![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/PYoh212.png)
+![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/5ubMwgD.png)
 
 ### Above but with training values
 ![Above with training values](https://i.imgur.com/7kG9hXn.png)
