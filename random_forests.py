@@ -15,8 +15,7 @@ def hyperparameters(
         time_split: TimeSeriesSplit,
         instance: str,
         x_features: pd.DataFrame, y_passengers: pd.Series) -> pd.DataFrame:
-    """ modelos de floresta aleatória com diferentes hiperparâmetros
-    sendo iterados na função anterior
+    """ different n_estimators and max_depth parameters
 
     Args:
         time_split (TimeSeriesSplit): growing-window forward-validation method
@@ -27,7 +26,6 @@ def hyperparameters(
     Returns:
         pd.DataFrame: performance metrics
     """
-    # different configs for node and max depth in random forest hyperparameters
     trees = [2, 10, 20, 50, 100]
     depth = [5, 10, 20, 50, 100]
     results = pd.DataFrame()
@@ -72,17 +70,27 @@ def timesplit(
         y_train, y_test = y_passengers.iloc[train_index], y_passengers.iloc[test_index]
 
         reg.fit(x_train, y_train)
+
+        acc_train = round(reg.score(x_train, y_train) * 100, 2)
         acc = round(reg.score(x_test, y_test) * 100, 2)  # R²
+
         y_pred = reg.predict(x_test)
+        y_pred_train = reg.predict(x_train)
+
         erro_ab = mean_absolute_error(
             y_test, y_pred)
+        erro_ab_train = mean_absolute_error(
+            y_train, y_pred_train)
 
         end = time.time()
 
-        results.append([acc, erro_ab, train_index[-1], (end-start)])
+        results.append([acc, erro_ab, acc_train, erro_ab_train,
+                       train_index[-1], (end-start)])
         print("Random Forest R2:", acc, "%")
-        # scatter plot with all the predictions vs real values (called per iteration)
-        graphics.realvalue_vs_prediction_graphic(
-            y_test, y_pred, x_train, x_features, max_depth, n_estimators)
+        # scatter plot with all the predictions vs real values (called per iteration) for A100N100
+
+        if (n_estimators == 100) & (max_depth == 100):
+            graphics.realvalue_vs_prediction_graphic(
+                y_test, y_pred, x_train, x_test, acc, erro_ab, x_features)
 
     return results

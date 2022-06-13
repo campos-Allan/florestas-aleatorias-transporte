@@ -59,7 +59,7 @@ def passenger_formatting(df_trips: pd.DataFrame) -> pd.DataFrame:
                 date(2021, 9, 7), date(2021, 10, 12), date(2021, 11, 2),
                 date(2021, 11, 15), date(2021, 12, 8), date(2021, 12, 25)]
     df_trips['Holiday'] = df_trips['trip'].apply(
-        lambda x: 1 if x in holidays else 0)
+        lambda x: 1 if x.date() in holidays else 0)
     day = timedelta(1)
     pre_holiday = []
     after_holiday = []
@@ -67,13 +67,13 @@ def passenger_formatting(df_trips: pd.DataFrame) -> pd.DataFrame:
         pre_holiday.append(i-day)
         after_holiday.append(i+day)
     df_trips['Pre Holiday'] = df_trips['trip'].apply(
-        lambda x: 1 if x in pre_holiday else 0)
+        lambda x: 1 if x.date() in pre_holiday else 0)
     df_trips['After Holiday'] = df_trips['trip'].apply(
-        lambda x: 1 if x in after_holiday else 0)
+        lambda x: 1 if x.date() in after_holiday else 0)
 
     # new pandemic attributes
     df_trips['Pandemic'] = df_trips["trip"].map(
-        lambda x: 1 if x > date(2020, 3, 15) else 0)
+        lambda x: 1 if x.date() > date(2020, 3, 15) else 0)
 
     # replacing bus line names for integers from 1 to 319 (number of bus lines)
     df_trips['bus_line'] = df_trips['bus_line'].astype(str)
