@@ -1,5 +1,9 @@
 # RANDOM FORESTS APPLICATION IN PUBLIC TRANSPORTATION DATABASE
+<<<<<<< HEAD
 ### version 2 - mainly updated graphic generation and data mining process (twice as fast now with glob), some formatting fixes on the other files
+=======
+
+>>>>>>> 4a84ae81496802db094a6c6fe72ebbf1d2bae040
 ## Quick Summary
 This project consists in the application of a myriad of random forests regressor models, varying in the hyperparameters of 'max_depth' and 'n_estimators', with the objective to analyze its capacity to predict the number of passengers per bus line per day in a certain time of the year, with a certain set of weather conditions.
 
@@ -56,6 +60,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Rain data cleaned
 ![Rain data cleaned](https://i.imgur.com/OHUb8Sz.png)
 
+<<<<<<< HEAD
 ### R² Boxplot of all random forest models - full dataset
 ![R² Boxplot of all random forest models - full dataset](https://i.imgur.com/62Z6H79.png)
 
