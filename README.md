@@ -84,11 +84,10 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Time elapsed per random forest model - pandemic dataset
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/HrPUQhL.png)
 
-### Models with max_depth set to 20 onwards seem to overfitted (looking at the training values in next pics), while the models with max_depth = 5 seem to underfitted the data, see the next pics for an in-depth look as the model with max_depth=10 seem to be between those two extremes. Pandemic data makes the model very erratic, some changes could be made to change the big variations on the data.
 ### R² and MAE values per iteration on A100N100 model - full dataset
 ![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/faV9WgG.png)
 
-### Above but with training values - seems overfitted although the test values seem good while outside the pandemic data (dive at 16th iteration)
+### Above but with training values
 ![Above with training values](https://i.imgur.com/Q9VcDPY.png)
 
 ### R² and MAE values per iteration on A10N10 model - full dataset
@@ -100,7 +99,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### R² and MAE values per iteration on A100N100 model - pre pandemic dataset
 ![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/LOIXmjf.png)
 
-### Above but with training values - seems overfitted although the test values seem good
+### Above but with training values
 ![Above with training values](https://i.imgur.com/bA8Jbge.png)
 
 ### R² and MAE values per iteration on A10N10 model - pre pandemic dataset
@@ -124,7 +123,7 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect 'predictions = real values'
 ![Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line](https://i.imgur.com/wWBYxay.png)
 
-### Next update or studies could be done to improve model A10N10 performance without overfitting it, and finding a better way to deal with the variation of the pandemic data. Also, I'm still figuring out how the models with max_depth set to 20 onwards seem overfitted by their training perfomance even though the test perfomance are not from an usual overfitted model.
+### Next update or studies could be done to finding a better way to deal with the variation of the pandemic data.
 
 More analysis like this and the discussion behind those results are in the thesis.
 
