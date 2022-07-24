@@ -1,6 +1,6 @@
 # RANDOM FORESTS APPLICATION IN PUBLIC TRANSPORTATION DATABASE
 
-### version 2 - mainly updated graphic generation and data mining process (twice as fast now with glob), some formatting fixes on the other files
+### version 3 - reverted to older data mining process, some formatting fixes on the other files
 
 ## Quick Summary
 This project consists in the application of a myriad of random forests regressor models, varying in the hyperparameters of 'max_depth' and 'n_estimators', with the objective to analyze its capacity to predict the number of passengers per bus line per day in a certain time of the year, with a certain set of weather conditions.
@@ -57,23 +57,24 @@ Following the removal of the public transportation dataset, a few adjustments ha
 
 ### Rain data cleaned
 ![Rain data cleaned](https://i.imgur.com/OHUb8Sz.png)
+
 ### R² Boxplot of all random forest models - full dataset
-![R² Boxplot of all random forest models - full dataset](https://i.imgur.com/62Z6H79.png)
+![R² Boxplot of all random forest models - full dataset](https://i.imgur.com/iYoDBIU.png)
 
 ### R² Boxplot of all random forest models - pre pandemic dataset
-![R² Boxplot of all random forest models - pre pandemic dataset](https://i.imgur.com/ipt55ra.png)
+![R² Boxplot of all random forest models - pre pandemic dataset](https://i.imgur.com/U5YU6FE.png)
 
 ### R² Boxplot of all random forest models - pandemic dataset
-![R² Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/L8ghGEP.png)
+![R² Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/jfOodU2.png)
 
 ### MAE Boxplot of all random forest models - full dataset
-![MAE Boxplot of all random forest models - full dataset](https://i.imgur.com/yOmSSaU.png))
+![MAE Boxplot of all random forest models - full dataset](https://i.imgur.com/luReWYz.png)
 
 ### MAE Boxplot of all random forest models - pre pandemic dataset
 ![MAE Boxplot of all random forest models - pre pandemic dataset](https://i.imgur.com/G9FfYzX.png)
 
 ### MAE Boxplot of all random forest models - pandemic dataset
-![MAE Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/esP7LZB.png)
+![MAE Boxplot of all random forest models - pandemic dataset](https://i.imgur.com/MCPyszE.png)
 
 ### Time elapsed per random forest model - full dataset
 ![Time elapsed per random forest model - full dataset](https://i.imgur.com/AlFOY1o.png)
@@ -85,40 +86,22 @@ Following the removal of the public transportation dataset, a few adjustments ha
 ![Time elapsed per random forest model - pandemic dataset](https://i.imgur.com/HrPUQhL.png)
 
 ### R² and MAE values per iteration on A100N100 model - full dataset
-![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/faV9WgG.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/Q9VcDPY.png)
+![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/dNsB1xB.png)
 
 ### R² and MAE values per iteration on A10N10 model - full dataset
-![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/7LR2IJP.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/2wvbVFB.png)
+![R² and MAE values per iteration on A100N100 model - full dataset](https://i.imgur.com/2wvbVFB.png)
 
 ### R² and MAE values per iteration on A100N100 model - pre pandemic dataset
-![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/LOIXmjf.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/bA8Jbge.png)
+![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/TEcj7uD.png)
 
 ### R² and MAE values per iteration on A10N10 model - pre pandemic dataset
-![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/pCQuDVD.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/wLeyMb2.png)
+![R² and MAE values per iteration on A100N100 model - pre pandemic dataset](https://i.imgur.com/wLeyMb2.png)
 
 ### R² and MAE values per iteration on A100N100 model - pandemic dataset
-![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/PftcB1b.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/KabSsg9.png)
+![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/9Lt7jr3.png)
 
 ### R² and MAE values per iteration on A10N10 model - pandemic dataset
-![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/5ubMwgD.png)
-
-### Above but with training values
-![Above with training values](https://i.imgur.com/7kG9hXn.png)
+![R² and MAE values per iteration on A100N100 model - pandemic dataset](https://i.imgur.com/7kG9hXn.png)
 
 ### Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect 'predictions = real values'
 ![Closer look to what is happening on the iterations of the growing window on the full dataset of the A100N100 model, and what happens when it reaches the pandemic, red line being the regression of predictions vs real values and green line the perfect predictions = real values line](https://i.imgur.com/wWBYxay.png)
