@@ -15,17 +15,17 @@ def hyperparameters(
         time_split: TimeSeriesSplit,
         instance: str,
         x_features: pd.DataFrame, y_passengers: pd.Series) -> pd.DataFrame:
-    """ different n_estimators and max_depth parameters
-
+    """ modelos de floresta aleatória com diferentes hiperparâmetros
+    sendo iterados na função anterior
     Args:
         time_split (TimeSeriesSplit): growing-window forward-validation method
         instance (str): todo -> all dataset; pan -> pandemic; pre -> pre pandemic
         x_features (pd.DataFrame): attributes
         y_passengers (pd.Series): independent variable
-
     Returns:
         pd.DataFrame: performance metrics
     """
+    # different configs for node and max depth in random forest hyperparameters
     trees = [2, 10, 20, 50, 100]
     depth = [5, 10, 20, 50, 100]
     results = pd.DataFrame()
@@ -42,14 +42,12 @@ def timesplit(
         n_estimators: int, max_depth: int) -> List[List]:
     """dividing dataset between traning and testing with iterations going
     through data with the method growing-window forward-validation
-
     Args:
         time_split (TimeSeriesSplit): growing-window forward-validation model
         x_features (pd.DataFrame): attributes
         y_passengers (pd.Series): independent variable
         n_estimators (int): number of trees in random forest
         max_depth (int): maximum depth of trees in random forest
-
     Returns:
         List[List]: performance metrics
     """
@@ -70,9 +68,8 @@ def timesplit(
         y_train, y_test = y_passengers.iloc[train_index], y_passengers.iloc[test_index]
 
         reg.fit(x_train, y_train)
-
-        acc_train = round(reg.score(x_train, y_train) * 100, 2)
         acc = round(reg.score(x_test, y_test) * 100, 2)  # R²
+        acc_train = round(reg.score(x_train, y_train) * 100, 2)
 
         y_pred = reg.predict(x_test)
         y_pred_train = reg.predict(x_train)
@@ -86,9 +83,10 @@ def timesplit(
 
         results.append([acc, erro_ab, acc_train, erro_ab_train,
                        train_index[-1], (end-start)])
-        print("Random Forest R2:", acc, "%")
-        # scatter plot with all the predictions vs real values (called per iteration) for A100N100
-
+        print(f'R2:{acc} % / R2 train:{acc_train}')
+        print(
+            f'MAE:{erro_ab} / MAE train:{erro_ab_train} - A{n_estimators}N{max_depth}')
+        # scatter plot with all the predictions vs real values (called per iteration)
         if (n_estimators == 100) & (max_depth == 100):
             graphics.realvalue_vs_prediction_graphic(
                 y_test, y_pred, x_train, x_test, acc, erro_ab, x_features)

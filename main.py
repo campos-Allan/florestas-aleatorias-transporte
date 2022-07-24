@@ -1,6 +1,5 @@
 """ undergraduate thesis project - predicting demand with random forest
 in a real public transportation database
-
 -> run the code through here, for more info README.md
 """
 import pandas as pd
@@ -21,16 +20,19 @@ going every month from 2016 to 2021 with every bus trip, i got the files
 on my HD but they are too big, so the compiled result from this part of the code
 is the final_passenger_data.csv spreadsheet, after groupby date and bus line
 
-df_passenger = data_mining.passenger_data_compiler(df_passenger)
+df_passenger = data_mining.passenger_data_compiler(
+    df_passenger)
+df_passenger = df_passenger[df_passenger.passenger < 500]
+df_passenger = df_passenger[df_passenger.passenger > 0]
+
 '''
 df_passenger = pd.DataFrame(pd.read_csv(
-    'final_passenger_data.csv', encoding='utf-8', sep=';',
+    'final_passenger_data.csv', encoding='utf-8', sep=',',
     usecols=['trip', 'bus_line', 'passenger']))
 
 df_passenger['trip'] = pd.to_datetime(
-    df_passenger['trip'], dayfirst=True)
+    df_passenger['trip'], format='%Y-%m-%d')
 df_passenger = df_passenger.sort_values(by='trip')
-
 '''
 # generating graphic of all trips, before and after groupby
 graphics.passenger_alltrips_graphic(df_passenger)
@@ -45,7 +47,7 @@ df_passenger = preprocessing.passenger_formatting(df_passenger)
 
 # compiling and formatting weather data
 df_weather = pd.DataFrame()
-df_weather = data_mining.weather_data_compiler()
+df_weather = data_mining.weather_data_compiler(df_weather)
 df_weather = preprocessing.weather_formatting(df_weather)
 
 # merge weather dataframe with trip dataframe
@@ -55,14 +57,14 @@ df_final_data = df_final_data.rename(columns={
     'mean': 'Mean Temperature',
     'max': 'Max Temperature',
     'min': 'Min Temperature'})
-df_final_data.drop("trip", axis=1, inplace=True)
+df_final_data = df_final_data.drop("trip", axis=1)
 
 # separating feature variables from independent variable
 X = df_final_data.copy()
 y = X.pop("passenger")
 
 # first experiment with full dataset
-tscv = random_forests.TimeSeriesSplit(n_splits=24)  # +- 3 months
+tscv = random_forests.TimeSeriesSplit(n_splits=24)  # +- 3 meses
 Results_fulldataset = pd.DataFrame()
 Results_fulldataset = random_forests.hyperparameters(
     tscv, 'TODO', X, y)
@@ -76,14 +78,13 @@ X_pre = X[:400038]
 y_pre = y[:400038]
 
 # second experiment with only pre pandemic data
-tscv = random_forests.TimeSeriesSplit(n_splits=16)  # +- 3 months
+tscv = random_forests.TimeSeriesSplit(n_splits=16)  # +- 3 meses
 Results_prepandemic_data = pd.DataFrame()
 Results_prepandemic_data = random_forests.hyperparameters(
     tscv, 'PRE', X_pre, y_pre)
 
-
 # third experiment with only pandemic data
-tscv = random_forests.TimeSeriesSplit(n_splits=8)  # +- 3 months
+tscv = random_forests.TimeSeriesSplit(n_splits=8)  # +- 3 meses
 Results_pandemic_data = pd.DataFrame()
 Results_pandemic_data = random_forests.hyperparameters(
     tscv, 'PAN', X_pan, y_pan)
