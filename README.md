@@ -11,7 +11,7 @@ The public transportation dataset used for the project is from Belo Horizonte ci
 
 The weather dataset is from INMET (https://portal.inmet.gov.br/dadoshistoricos).
 
-The graduate underthesis this project is based on will be available soon (in PT-BR).
+[The graduate underthesis this project is based on (in PT-BR)](https://pantheon.ufrj.br/handle/11422/17623).
 
 ## Disclaimer
 Following the removal of the public transportation dataset, a few adjustments had to be made, as there was no way to web scrap anymore. So to avoid uploading >5GB of spreadsheets, a few steps were skipped, thats why the first part of the code in `main.py` is between quotation marks. The objective of that code was to go through every passenger spreadsheet and compile the data, then groupby the trips by date and bus line, getting the quantity of passengers in each bus line, each day of the period between 2016 and 2021. As the code is between quotation marks, this step was skipped, and the final spreadsheet with all the trips grouped by day and bus line with the total of passengers is actually on `final_passenger_data.csv` already.
